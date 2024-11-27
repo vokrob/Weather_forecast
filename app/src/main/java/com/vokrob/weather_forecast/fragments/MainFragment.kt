@@ -9,9 +9,15 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import com.google.android.material.tabs.TabLayoutMediator
+import com.vokrob.weather_forecast.R
+import com.vokrob.weather_forecast.adapters.VpAdapter
 import com.vokrob.weather_forecast.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
+    private val fList = listOf(HoursFragment.newInstance(), DaysFragment.newInstance())
+    private val tList = listOf(R.string.hours, R.string.days)
     private lateinit var pLauncher: ActivityResultLauncher<String>
     private lateinit var binding: FragmentMainBinding
 
@@ -27,6 +33,16 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         checkPermission()
+        init()
+    }
+
+    private fun init() = with(binding) {
+        val adapter = VpAdapter(activity as FragmentActivity, fList)
+        vp.adapter = adapter
+
+        TabLayoutMediator(tabLayout, vp) { tab, pos ->
+            tab.text = getString(tList[pos])
+        }.attach()
     }
 
     private fun permissionListener() {
