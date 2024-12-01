@@ -61,7 +61,6 @@ class MainFragment : Fragment() {
 
     private fun updateCurrentCard() = with(binding) {
         model.liveDataCurrent.observe(viewLifecycleOwner) {
-
             val maxMinTemp = "${it.maxTemp}°C/${it.minTemp}°C"
             val currentTemp = "${it.currentTemp}°C"
 
@@ -146,12 +145,7 @@ class MainFragment : Fragment() {
             mainObject.getJSONObject("current").getJSONObject("condition").getString("icon"),
             weatherItem.hours
         )
-
         model.liveDataCurrent.value = item
-
-        Log.d("MyLog", "MaxTemp: ${item.maxTemp}")
-        Log.d("MyLog", "MinTemp: ${item.minTemp}")
-        Log.d("MyLog", "Hours: ${item.hours}")
     }
 
     companion object {

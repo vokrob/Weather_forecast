@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import com.vokrob.weather_forecast.R
 import com.vokrob.weather_forecast.databinding.ListItemBinding
 
@@ -15,9 +16,12 @@ class WeatherAdapter : ListAdapter<WeatherModel, WeatherAdapter.Holder>(Comparat
         val binding = ListItemBinding.bind(view)
 
         fun bind(item: WeatherModel) = with(binding) {
+            val currentTemp = "${item.currentTemp}°C"
+
             tvDate.text = item.time
             tvCondition.text = item.condition
-            tvTemp.text = item.currentTemp
+            tvTemp.text = currentTemp
+            Picasso.get().load("https:" + item.imageUrl).into(im)
         }
     }
 
