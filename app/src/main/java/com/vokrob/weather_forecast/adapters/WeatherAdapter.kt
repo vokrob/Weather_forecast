@@ -20,7 +20,11 @@ class WeatherAdapter : ListAdapter<WeatherModel, WeatherAdapter.Holder>(Comparat
 
             tvDate.text = item.time
             tvCondition.text = item.condition
-            tvTemp.text = currentTemp
+            tvTemp.text = if (item.currentTemp.isEmpty()) {
+                "${item.maxTemp}°C / ${item.minTemp}°C"
+            } else {
+                currentTemp
+            }
             Picasso.get().load("https:" + item.imageUrl).into(im)
         }
     }
