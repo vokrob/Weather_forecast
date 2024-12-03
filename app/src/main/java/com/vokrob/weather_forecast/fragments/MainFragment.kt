@@ -1,8 +1,12 @@
 package com.vokrob.weather_forecast.fragments
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,17 +22,19 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
+import com.vokrob.weather_forecast.DialogManager
 import com.vokrob.weather_forecast.MainViewModel
 import com.vokrob.weather_forecast.R
 import com.vokrob.weather_forecast.adapters.VpAdapter
 import com.vokrob.weather_forecast.adapters.WeatherModel
 import com.vokrob.weather_forecast.databinding.FragmentMainBinding
 import org.json.JSONObject
+import java.nio.charset.Charset
 
 const val API_KEY = "87b8e23ecfe84f1da9c160237242511"
 
@@ -39,6 +45,10 @@ class MainFragment : Fragment() {
     private lateinit var pLauncher: ActivityResultLauncher<String>
     private lateinit var binding: FragmentMainBinding
     private val model: MainViewModel by activityViewModels()
+
+    private fun convertToUTF8(text: String): String {
+        return String(text.toByteArray(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8"))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +64,12 @@ class MainFragment : Fragment() {
         checkPermission()
         init()
         updateCurrentCard()
-        getLocation()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        checkLocation()
     }
 
     private fun init() = with(binding) {
@@ -69,8 +84,25 @@ class MainFragment : Fragment() {
 
         ibSync.setOnClickListener {
             tabLayout.selectTab(tabLayout.getTabAt(0))
-            getLocation()
+            checkLocation()
         }
+    }
+
+    private fun checkLocation() {
+        if (isLocationEnabled()) {
+            getLocation()
+        } else {
+            DialogManager.locationSettingsDialog(requireContext(), object : DialogManager.Listener {
+                override fun onClick() {
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+            })
+        }
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val lm = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     private fun getLocation() {
@@ -86,7 +118,7 @@ class MainFragment : Fragment() {
         ) {
             return
         }
-        fLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, ct.token)
+        fLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, ct.token)
             .addOnCompleteListener {
                 requestWeatherData("${it.result.latitude}, ${it.result.longitude}")
             }
@@ -126,7 +158,6 @@ class MainFragment : Fragment() {
                 "&days=" +
                 "3" +
                 "&aqi=no&alerts=no"
-
         val queue = Volley.newRequestQueue(context)
         val request = StringRequest(
             Request.Method.GET,
@@ -147,14 +178,16 @@ class MainFragment : Fragment() {
     private fun parseDays(mainObject: JSONObject): List<WeatherModel> {
         val list = ArrayList<WeatherModel>()
         val daysArray = mainObject.getJSONObject("forecast").getJSONArray("forecastday")
-        val name = mainObject.getJSONObject("location").getString("name")
+        val name = convertToUTF8(mainObject.getJSONObject("location").getString("name"))
 
         for (i in 0 until daysArray.length()) {
             val day = daysArray[i] as JSONObject
             val item = WeatherModel(
                 name,
                 day.getString("date"),
-                day.getJSONObject("day").getJSONObject("condition").getString("text"),
+                convertToUTF8(
+                    day.getJSONObject("day").getJSONObject("condition").getString("text")
+                ),
                 "",
                 day.getJSONObject("day").getString("maxtemp_c").toFloat().toInt().toString(),
                 day.getJSONObject("day").getString("mintemp_c").toFloat().toInt().toString(),
@@ -164,15 +197,16 @@ class MainFragment : Fragment() {
             list.add(item)
         }
         model.liveDataList.value = list
-
         return list
     }
 
     private fun parseCurrentData(mainObject: JSONObject, weatherItem: WeatherModel) {
         val item = WeatherModel(
-            mainObject.getJSONObject("location").getString("name"),
+            convertToUTF8(mainObject.getJSONObject("location").getString("name")),
             mainObject.getJSONObject("current").getString("last_updated"),
-            mainObject.getJSONObject("current").getJSONObject("condition").getString("text"),
+            convertToUTF8(
+                mainObject.getJSONObject("current").getJSONObject("condition").getString("text")
+            ),
             mainObject.getJSONObject("current").getString("temp_c"),
             weatherItem.maxTemp,
             weatherItem.minTemp,
@@ -187,8 +221,6 @@ class MainFragment : Fragment() {
         fun newInstance() = MainFragment()
     }
 }
-
-
 
 
 
