@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:fontFamily="@font/aubrey"
+                android:fontFamily="@font/goldman"
                 android:text="20/07/2022 13:00"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -60,8 +60,8 @@
                 android:id="@+id/tvCity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/aubrey"
-                android:text="Madrid"
+                android:fontFamily="@font/goldman"
+                android:text="@string/barnaul"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +72,7 @@
                 android:id="@+id/tvCurrentTemp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/aubrey"
+                android:fontFamily="@font/goldman"
                 android:text="20°C"
                 android:textColor="@color/white"
                 android:textSize="70sp"
@@ -84,7 +84,7 @@
                 android:id="@+id/tvCondition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/aubrey"
+                android:fontFamily="@font/goldman"
                 android:text="Sunny"
                 android:textColor="@color/white"
                 android:textSize="16sp"
@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:fontFamily="@font/aubrey"
+                android:fontFamily="@font/goldman"
                 android:text="34°C / 15°C"
                 android:textColor="@color/white"
                 android:textSize="16sp"
@@ -107,27 +107,27 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvCondition" />
 
             <ImageButton
-                android:id="@+id/ibSearch"
+                android:id="@+id/ibLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="10dp"
                 android:background="@null"
-                android:src="@drawable/ic_search"
+                android:src="@drawable/ic_location"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageButton
-                android:id="@+id/ibSync"
+                android:id="@+id/ibSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="10dp"
                 android:background="@null"
-                android:src="@drawable/ic_sync"
+                android:src="@drawable/ic_search"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/ibSearch" />
+                app:layout_constraintTop_toTopOf="@+id/ibLocation" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -146,12 +146,12 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hours" />
+            android:text="@string/hours" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Days" />
+            android:text="@string/days" />
 
     </com.google.android.material.tabs.TabLayout>
 

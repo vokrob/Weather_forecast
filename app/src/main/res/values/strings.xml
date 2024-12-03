@@ -4,4 +4,8 @@
     <string name="hours">Hours</string>
     <string name="days">Days</string>
     <string name="empty">Empty</string>
+    <string name="barnaul">Barnaul</string>
+    <string name="enable_loc">Enable location?</string>
+    <string name="disable_loc">Location disabled, do you want enable location?</string>
+    <string name="city_name">City name:</string>
 </resources>

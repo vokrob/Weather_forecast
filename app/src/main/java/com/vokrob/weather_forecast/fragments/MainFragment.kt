@@ -63,13 +63,8 @@ class MainFragment : Fragment() {
 
         checkPermission()
         init()
+        requestWeatherData(getString(R.string.barnaul))
         updateCurrentCard()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        checkLocation()
     }
 
     private fun init() = with(binding) {
@@ -82,9 +77,16 @@ class MainFragment : Fragment() {
 
         fLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
-        ibSync.setOnClickListener {
+        ibLocation.setOnClickListener {
             tabLayout.selectTab(tabLayout.getTabAt(0))
             checkLocation()
+        }
+        ibSearch.setOnClickListener {
+            DialogManager.searchByNameDialog(requireContext(), object : DialogManager.Listener {
+                override fun onClick(name: String?) {
+                    name?.let { it1 -> requestWeatherData(it1) }
+                }
+            })
         }
     }
 
@@ -93,7 +95,7 @@ class MainFragment : Fragment() {
             getLocation()
         } else {
             DialogManager.locationSettingsDialog(requireContext(), object : DialogManager.Listener {
-                override fun onClick() {
+                override fun onClick(name: String?) {
                     startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }
             })
@@ -130,7 +132,7 @@ class MainFragment : Fragment() {
 
             tvData.text = it.time
             tvCity.text = it.city
-            tvCurrentTemp.text = it.currentTemp.ifEmpty { maxMinTemp }
+            tvCurrentTemp.text = if (it.currentTemp.isEmpty()) maxMinTemp else "${it.currentTemp}°C"
             tvCondition.text = it.condition
             tvMaxMin.text = if (it.currentTemp.isEmpty()) "" else maxMinTemp
             Picasso.get().load("https:" + it.imageUrl).into(imWeather)
