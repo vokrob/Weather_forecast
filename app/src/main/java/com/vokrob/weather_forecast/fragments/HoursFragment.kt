@@ -48,11 +48,13 @@ class HoursFragment : Fragment() {
         val list = ArrayList<WeatherModel>()
 
         for (i in 0 until hoursArray.length()) {
+            val timeString = (hoursArray[i] as JSONObject).getString("time")
+            val timeOnly = timeString.substringAfter(" ")
             val item = WeatherModel(
                 wItem.city,
-                (hoursArray[i] as JSONObject).getString("time"),
+                timeOnly,
                 (hoursArray[i] as JSONObject).getJSONObject("condition").getString("text"),
-                (hoursArray[i] as JSONObject).getString("temp_c"),
+                (hoursArray[i] as JSONObject).getString("temp_c").toFloat().toInt().toString(),
                 "",
                 "",
                 (hoursArray[i] as JSONObject).getJSONObject("condition").getString("icon"),
@@ -68,9 +70,6 @@ class HoursFragment : Fragment() {
         fun newInstance() = HoursFragment()
     }
 }
-
-
-
 
 
 

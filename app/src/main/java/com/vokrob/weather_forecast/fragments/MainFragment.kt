@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.vokrob.weather_forecast.DialogManager
 import com.vokrob.weather_forecast.MainViewModel
@@ -127,6 +128,8 @@ class MainFragment : Fragment() {
     }
 
     private fun updateCurrentCard() = with(binding) {
+        imWeather.visibility = View.INVISIBLE
+
         model.liveDataCurrent.observe(viewLifecycleOwner) {
             val maxMinTemp = "${it.maxTemp}°C / ${it.minTemp}°C"
 
@@ -135,7 +138,16 @@ class MainFragment : Fragment() {
             tvCurrentTemp.text = if (it.currentTemp.isEmpty()) maxMinTemp else "${it.currentTemp}°C"
             tvCondition.text = it.condition
             tvMaxMin.text = if (it.currentTemp.isEmpty()) "" else maxMinTemp
-            Picasso.get().load("https:" + it.imageUrl).into(imWeather)
+            Picasso.get().load("https:" + it.imageUrl).into(imWeather, object : Callback {
+
+                override fun onSuccess() {
+                    imWeather.visibility = View.VISIBLE
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("Picasso", "Error loading image", e)
+                }
+            })
         }
     }
 
@@ -209,7 +221,7 @@ class MainFragment : Fragment() {
             convertToUTF8(
                 mainObject.getJSONObject("current").getJSONObject("condition").getString("text")
             ),
-            mainObject.getJSONObject("current").getString("temp_c"),
+            mainObject.getJSONObject("current").getString("temp_c").toFloat().toInt().toString(),
             weatherItem.maxTemp,
             weatherItem.minTemp,
             mainObject.getJSONObject("current").getJSONObject("condition").getString("icon"),
